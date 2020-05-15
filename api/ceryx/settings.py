@@ -16,7 +16,9 @@ if SECRET_KEY:
     with open(SECRET_KEY, "r") as f:
         SECRET_KEY = f.read()
 
-REDIS_HOST = os.getenv("CERYX_REDIS_HOST", "127.0.0.1")
+REDIS_HOST = os.getenv("CERYX_REDIS_HOST", None)
+print("REDIS_HOST ----->")
+print(REDIS_HOST)
 REDIS_PORT = int(os.getenv("CERYX_REDIS_PORT", 6379))
 REDIS_PASSWORD = os.getenv("CERYX_REDIS_PASSWORD", None)
 REDIS_PREFIX = os.getenv("CERYX_REDIS_PREFIX", "ceryx")

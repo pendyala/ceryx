@@ -1,4 +1,5 @@
-local redis = require "resty.redis"
+--local redis = require "resty.redis"
+local rcluster = require "resty.rcluster"
 local utils = require "ceryx.utils"
 
 local prefix = utils.getenv("CERYX_REDIS_PREFIX", "ceryx")
@@ -13,8 +14,24 @@ function exports.client()
     -- Prepare the Redis client
     ngx.log(ngx.DEBUG, "Preparing Redis client.")
 
-    local red = redis:new()
-    red:set_timeout(timeout) 
+    --local red = redis:new()
+    --[[local server = {
+        { host = host, port = port}
+    }]]--
+
+    local server = {}
+    --table.insert(server, { host = host, port = port})
+    --ngx.log(ngx.DEBUG, "Server = " .. server)
+
+    local red = rcluster:new({
+        timeout = timeout,
+        server =  {
+            {
+                ["host"] = host, ["port"] = port
+            },
+        }
+    })
+    --red:set_timeout(timeout) 
 
     local res, err = red:connect(host, port)
 
@@ -26,7 +43,7 @@ function exports.client()
 
     ngx.log(ngx.DEBUG, "Redis client prepared.")
 
-    if password then
+    --[[if password then
         ngx.log(ngx.DEBUG, "Authenticating with Redis.")
         local res, err = red:auth(password)
         if not res then
@@ -34,7 +51,7 @@ function exports.client()
             return ngx.exit(ngx.HTTP_SERVER_ERROR)
         end
     end
-    ngx.log(ngx.DEBUG, "Authenticated with Redis.")
+    ngx.log(ngx.DEBUG, "Authenticated with Redis.")]]--
 
     return red
 end
